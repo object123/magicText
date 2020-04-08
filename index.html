@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<!----欢迎光临--------->
+<html>
+    <head>
+        <title>赠小肥同学</title>
+        <meta charset="utf-8"  author="object" time="2020-4-3">
+        <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+
+        <style>
+            @font-face{
+                font-family: hualihushao;
+                src : url('华康少女文字W5(P).TTF');
+}
+            *{
+                margin: 0;
+                padding: 0;
+                border: 0;
+            }
+            
+            canvas{
+                margin: 0;
+                padding: 0;
+                position: fixed;
+            }
+
+            #canvas{
+                background: #000;
+           }
+
+        </style>
+    <body>
+        <canvas id="canvas"></canvas>
+        <canvas id="myCanvas">
+            对不起,您的浏览器不支持canvas
+        </canvas> 
+        <script>
+//通用函数
+
+            function getColor(){
+                let colorR = Math.round(Math.random()*255);
+                let colorG = Math.round(Math.random()*255);
+                let colorB = Math.round(Math.random()*255);
+                let color = "rgb("+colorR+", "+colorG+", "+colorB+")";
+                return color;
+            }
+
+            function getPixelRatio(context) {
+                var backingStore = context.backingStorePixelRatio ||
+                context.webkitBackingStorePixelRatio ||
+                context.mozBackingStorePixelRatio ||
+                context.msBackingStorePixelRatio ||
+                context.oBackingStorePixelRatio ||
+                context.backingStorePixelRatio || 1;
+                return (window.devicePixelRatio || 1) / backingStore;
+            }
+//第一个canvas画布
+
+            var Canvas = document.getElementById("canvas");
+            var typeEum = ["fill", "stroke"];
+            var step = [-2, -1, 0, 1, 2];
+            var pageX = 0;
+            var pageY = 0;
+            var checkMoveFlag = false;
+            if(Canvas.getContext){
+                var firstContext = Canvas.getContext("2d");
+            }
+            var firstRatio = getPixelRatio(firstContext);
+            Canvas.width = window.innerWidth*firstRatio;
+            Canvas.height = window.innerHeight*firstRatio;
+            Canvas.style.width = window.innerWidth+"px";
+            Canvas.style.height = window.innerHeight+"px";
+            function Bubble(x, y){
+                this.y = y;
+                this.x = x;
+                this.stepX = step[Math.round(Math.random()*4)];
+                this.stepY = step[Math.round(Math.random()*4)];
+                this.r = Math.random()*10;
+                this.color = getColor();
+                this.drawType = typeEum[Math.round(Math.random())];
+                this.draw = function(){
+                    firstContext.beginPath();
+                    firstContext.arc(this.x*firstRatio, this.y*firstRatio, this.r*firstRatio, 0, Math.PI*2);
+                    if(this.drawType == "stroke"){
+                        firstContext.strokeStyle = this.color;
+                        firstContext.globalAipha = 0.01;
+                        firstContext.stroke();
+                    }
+                    else if(this.drawType == "fill"){
+                        firstContext.fillStyle = this.color;
+                        firstContext.globalAipha = 0.01;
+                        firstContext.fill();
+                    }
+                };
+                this.step  = function(){
+                    this.x+=this.stepX*firstRatio;
+                    this.y+=this.stepY*firstRatio;
+                    this.r-=0.1;
+                    this.draw();
+                };
+            }
+
+            function clearBubble(){
+                Canvas.height =  window.innerHeight*firstRatio;
+            }
+
+            bubbles  = [];
+
+            function creatBubble(pageX, pageY){
+                let bubble = new Bubble(pageX, pageY);
+                bubbles[bubbles.length] = bubble;
+            }
+            
+            function update(){
+                clearBubble();
+                if(checkMoveFlag){
+                    creatBubble(pageX, pageY);
+                }
+                for(var i=0; i<bubbles.length; i++){
+                    if(bubbles[i].y < 0||bubbles[i].r < 0.1){
+                        bubbles.splice(i, 1);
+                    }
+                    else{
+                        bubbles[i].step();
+                        bubbles[i].draw();
+                    }
+                }
+            }
+
+            setInterval(update, 30);
+            
+
+
+//第二个canvas画布
+
+            var str = "祝小肥同学万事胜意，天天开心";
+            var len = str.length<8?8: str.length;
+            var textList = [];
+            let myCanvas = document.getElementById("myCanvas");
+            let context;
+            let displayCounter = 0;
+            let lastX = 0;
+            let lastY = 0;
+            let clearFlag = false;
+            let clearCounter = 0;
+            let timeId;
+            let phoneFlag = false;
+            if(myCanvas.getContext){
+                context = myCanvas.getContext("2d");
+            }
+            var secondRatio = getPixelRatio(context);
+            const windowsFont = "bold "+3*secondRatio+ "em hualihushao";
+            const phoneFont = "bold "+2*secondRatio+"em hualihushao";
+
+            function init(myCanvas){
+                myCanvas.width = window.innerWidth*secondRatio;
+                myCanvas.height = window.innerHeight*secondRatio;
+                myCanvas.style.width = window.innerWidth+"px";
+                myCanvas.style.height = window.innerHeight+"px";
+
+                myCanvas.addEventListener("mousedown",doMouseDown,false);
+                myCanvas.addEventListener("mouseup",doMouseUp,false);
+                myCanvas.addEventListener("mousemove", drawing, false);
+                myCanvas.addEventListener("touchmove", phone_Drawing, false);
+                myCanvas.addEventListener("touchstart",doMouseDown,false);
+                myCanvas.addEventListener("touchend",doMouseUp,false);
+                setTimeout("CanvasTimeOut()", 1000);
+            }
+
+            function getAngle(x, y, lastX, lastY){
+                length_X = lastX - x;
+                length_Y = lastY - y;
+                return Math.atan(length_Y/length_X);
+            }
+
+            function clearCanvas(){  
+                myCanvas.width = document.documentElement.clientWidth*secondRatio;
+            } 
+            function clearAll(){
+                clearCanvas();
+                textList = [];
+                displayCounter = 0;
+            }
+
+            function clearText(textList, font){   
+                clearCanvas();   
+                for(let i=0; i<textList.length; i++){
+                    drawingText(textList[i], font);
+                }
+            }
+
+            function drawingText(textFor, Lfont){
+                context.font = Lfont;
+                context.fillStyle = textFor.color;
+                context.translate(textFor.x_position*secondRatio, textFor.y_position*secondRatio);
+                context.rotate(textFor.angle);
+                context.fillText(textFor.text, 0, 0);
+                context.rotate(-textFor.angle);
+                context.translate(-textFor.x_position*secondRatio, -textFor.y_position*secondRatio);
+            }
+
+            function drawing(event){
+                let x = event.clientX;
+                pageX = x;
+                let y = event.clientY;
+                pageY = y;
+                let dis = (lastX-x)**2+(y-lastY)**2;
+                if(checkMoveFlag&&(dis>=2500)){
+                    let color = getColor();
+                    let text = str[displayCounter];
+                    let angle = getAngle(x, y, lastX, lastY);
+                    let newPosition = {"x_position": x, 
+                                       "y_position": y,
+                                       "angle": angle,
+                                       "text": text,
+                                       "color": color
+                                        };
+                    let list_Length = textList.push(newPosition);
+                    if(list_Length == len+1){
+                        textList.shift();
+                        clearText(textList, windowsFont);
+                    }
+                    else{
+                        drawingText(textList[list_Length-1], windowsFont);
+                    }
+                    displayCounter++;
+                    if(displayCounter >= str.length){
+                        displayCounter = 0;
+                    }
+                    lastX = x;
+                    lastY = y;
+                }
+            }
+            
+            function phone_Drawing(event){
+                event.preventDefault();
+                let touch = event.touches[0];
+                let x = touch.pageX;
+                let y = touch.pageY;
+                pageX = x;
+                pageY = y;
+                phoneFlag = true;
+                dis = (lastX-x)**2+(y-lastY)**2;
+                if(dis>=1500){
+                    let color = getColor();
+                    let text = str[displayCounter];
+                    let angle = getAngle(x, y, lastX, lastY);
+                    let newPosition = {"x_position": x, 
+                                       "y_position": y,
+                                       "angle": angle,
+                                       "text": text,
+                                       "color": color
+                                        };
+                    let list_Length = textList.push(newPosition);
+                    if(list_Length == len+1){
+                        textList.shift();
+                        clearText(textList, phoneFont);
+                    }
+                    else{
+                        drawingText(textList[list_Length-1], phoneFont);
+                    }
+                    displayCounter++;
+                    if(displayCounter >= str.length){
+                        displayCounter = 0;
+                    }
+                    lastX = x;
+                    lastY = y;
+                }
+            }
+
+            function CanvasTimeOut(){
+                clearCounter ++;
+
+                if(clearCounter == 2){
+                    clearFlag = true;
+                }
+
+                if(clearFlag&&textList.length!==0){
+                    deleted = textList.shift();
+                        let timer = Math.round(Math.random()*30);
+                        for(var i=0; i<timer; i++){
+                            if(phoneFlag){
+                                creatBubble(deleted.x_position+16, deleted.y_position-16);
+                            }
+                            else{
+                                creatBubble(deleted.x_position+24, deleted.y_position-24);
+                            }
+                        }
+                    if(phoneFlag){
+                        clearText(textList, phoneFont);
+                    }
+                    else{
+                        clearText(textList, windowsFont);
+                    }
+                }
+                else if(clearFlag&&textList.length==0){
+                    clearFlag = false;
+                    clearCounter = 0;
+                }
+            }
+
+            function doMouseDown(){
+                checkMoveFlag = true;  
+                clearCounter = 0;
+                clearFlag = false;
+                clearInterval(timeId); 
+            }
+
+            function doMouseUp(){
+                checkMoveFlag = false;
+                timeId = setInterval("CanvasTimeOut()", 1000);
+            }
+
+            init(myCanvas);
+            </script>
+    </body>
+</html>
