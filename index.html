@@ -2,7 +2,7 @@
 <!----欢迎光临--------->
 <html>
     <head>
-        <title>赠小肥同学</title>
+        <title>送给小肥同学</title>
         <meta charset="utf-8"  author="object" time="2020-4-3">
         <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 
@@ -204,7 +204,11 @@
                 let y = event.clientY;
                 pageY = y;
                 let dis = (lastX-x)**2+(y-lastY)**2;
-                if(checkMoveFlag&&(dis>=2500)){
+                if(lastX==0&&lastY==0){
+                    lastX = x;
+                    lastY = y;
+                }
+                else if(checkMoveFlag&&(dis>=2500)){
                     let color = getColor();
                     let text = str[displayCounter];
                     let angle = getAngle(x, y, lastX, lastY);
@@ -240,7 +244,11 @@
                 pageY = y;
                 phoneFlag = true;
                 dis = (lastX-x)**2+(y-lastY)**2;
-                if(dis>=1500){
+                if(lastX==0&&lastY==0){
+                    lastX = x;
+                    lastY = y;
+                }
+                else if(dis>=1500){
                     let color = getColor();
                     let text = str[displayCounter];
                     let angle = getAngle(x, y, lastX, lastY);
@@ -308,6 +316,8 @@
             function doMouseUp(){
                 checkMoveFlag = false;
                 timeId = setInterval("CanvasTimeOut()", 1000);
+                lastX = 0;
+                lastY = 0;
             }
 
             init(myCanvas);
