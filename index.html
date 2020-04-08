@@ -9,8 +9,10 @@
         <style>
             @font-face{
                 font-family: hualihushao;
-                src : url('华康少女文字W5(P).TTF');
-}
+                src : url('shoanv.ttf') format("truetype"),
+                    url('shoanv.eot') format("Embedded-opentype"),
+                    url("shoanv.woff") format("woff");
+            }
             *{
                 margin: 0;
                 padding: 0;
@@ -132,8 +134,8 @@
 
 //第二个canvas画布
 
-            var str = "祝小肥同学万事胜意，天天开心";
-            var len = str.length<8?8: str.length;
+            var str = "祝愿小肥同学万事胜意，天天开心。";
+            var len = str.length<20?20: str.length;
             var textList = [];
             let myCanvas = document.getElementById("myCanvas");
             let context;
@@ -148,8 +150,10 @@
                 context = myCanvas.getContext("2d");
             }
             var secondRatio = getPixelRatio(context);
+
             const windowsFont = "bold "+3*secondRatio+ "em hualihushao";
             const phoneFont = "bold "+2*secondRatio+"em hualihushao";
+            console.log(windowsFont, phoneFont);
 
             function init(myCanvas){
                 myCanvas.width = window.innerWidth*secondRatio;
@@ -175,17 +179,11 @@
             function clearCanvas(){  
                 myCanvas.width = document.documentElement.clientWidth*secondRatio;
             } 
+
             function clearAll(){
                 clearCanvas();
                 textList = [];
                 displayCounter = 0;
-            }
-
-            function clearText(textList, font){   
-                clearCanvas();   
-                for(let i=0; i<textList.length; i++){
-                    drawingText(textList[i], font);
-                }
             }
 
             function drawingText(textFor, Lfont){
@@ -196,6 +194,13 @@
                 context.fillText(textFor.text, 0, 0);
                 context.rotate(-textFor.angle);
                 context.translate(-textFor.x_position*secondRatio, -textFor.y_position*secondRatio);
+            }
+
+            function clearText(textList, font){   
+                clearCanvas();   
+                for(let i=0; i<textList.length; i++){
+                    drawingText(textList[i], font);
+                }
             }
 
             function drawing(event){
