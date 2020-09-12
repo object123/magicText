@@ -128,13 +128,13 @@
                 }
             }
 
-            setInterval(update, 30);
+            window.onload = setInterval(update, 30);
             
 
 
 //第二个canvas画布
 
-            var str = "祝愿小肥同学万事胜意，天天开心。";
+            var str = "后会有期呀，小肥同学";
             var len = str.length<20?20: str.length;
             var textList = [];
             let myCanvas = document.getElementById("myCanvas");
@@ -153,7 +153,6 @@
 
             const windowsFont = "bold "+3*secondRatio+ "em hualihushao";
             const phoneFont = "bold "+2*secondRatio+"em hualihushao";
-            console.log(windowsFont, phoneFont);
 
             function init(myCanvas){
                 myCanvas.width = window.innerWidth*secondRatio;
@@ -173,7 +172,9 @@
             function getAngle(x, y, lastX, lastY){
                 length_X = lastX - x;
                 length_Y = lastY - y;
-                return Math.atan(length_Y/length_X);
+                angle = Math.atan(length_Y/length_X);
+                console.log(angle);
+                return angle;
             }
 
             function clearCanvas(){  
@@ -325,7 +326,7 @@
                 lastY = 0;
             }
 
-            init(myCanvas);
+            window.onload = init(myCanvas);
             </script>
     </body>
 </html>
