@@ -1,0 +1,12 @@
+@font-face {
+    font-family: "shoanv";
+    src: url("./shoanv.eot"); /* IE9 */
+    src: local("shoanv"), url("./shoanv.eot?#iefix") format("embedded-opentype"), /* IE6-IE8 */
+    url("./shoanv.woff") format("woff"), /* chrome, firefox */
+    url("./shoanv.ttf") format("truetype"), /* chrome, firefox, opera, Safari, Android, iOS 4.2+ */
+    url("./shoanv.svg#shoanv") format("svg"); /* iOS 4.1- */
+    font-style: normal;
+    font-weight: normal;
+}
+
+
